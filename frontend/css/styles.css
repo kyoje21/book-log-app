@@ -1,0 +1,321 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f5f5f7;
+  color: #222;
+}
+
+.site-header {
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+main {
+  padding: 1.5rem;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+/* Buttons */
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, color 0.1s ease;
+}
+
+.btn-primary {
+  background: #222;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+}
+
+.btn-secondary:hover {
+  background: #f2f2f2;
+}
+
+/* Cards / layout */
+
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.book-card {
+  display: flex;
+  gap: 0.75rem;
+  background: #ffffff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.book-card-cover {
+  width: 96px;
+  height: 144px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.book-card-body {
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.book-card-body h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.book-card-author {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.book-card-genres {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.actions-bar {
+  margin-top: 1.5rem;
+}
+
+/* Book detail layout */
+
+.book-detail-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .book-detail-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+.book-detail-panel {
+  display: flex;
+  gap: 1rem;
+}
+
+.book-detail-cover {
+  width: 140px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.book-detail-meta p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Notes */
+
+.notes-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.note-card {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.note-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.note-card-title {
+  font-weight: 600;
+}
+
+.note-card-meta {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.note-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.note-card-rating {
+  font-size: 0.9rem;
+  color: #f5a623;
+}
+
+/* Forms */
+
+.form-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+form label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  font: inherit;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-row label {
+  flex: 1;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Modal + background blur */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  max-width: 520px;
+  width: 100%;
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.6rem;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Blur the main content when modal is open */
+body.modal-open main,
+body.modal-open .site-header {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Rating stars */
+
+.rating-stars {
+  display: inline-flex;
+  gap: 0.15rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rating-stars .star {
+  opacity: 0.4;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.rating-stars .star.active {
+  opacity: 1;
+}
+
+.rating-stars .star.hovered {
+  opacity: 0.75;
+  transform: translateY(-1px);
+}

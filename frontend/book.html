@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Details - Book Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 id="bookTitle">Book Details</h1>
+    <a href="index.html" class="btn-secondary">← Back to My Books</a>
+  </header>
+
+  <main class="book-detail-layout">
+    <!-- Book info -->
+    <section class="book-detail-panel card">
+      <img id="bookCover" src="" alt="Book cover" class="book-detail-cover">
+      <div class="book-detail-meta">
+        <p><strong>Author:</strong> <span id="bookAuthor"></span></p>
+        <p><strong>Genres:</strong> <span id="bookGenres"></span></p>
+        <p><strong>Description:</strong></p>
+        <p id="bookDescription"></p>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section class="notes-panel card">
+      <div class="notes-header">
+        <h2>Chapter Notes</h2>
+        <button id="addNoteBtn" class="btn-primary">+ Add Note</button>
+      </div>
+
+      <div id="notesList" class="notes-list"></div>
+    </section>
+  </main>
+
+  <!-- NOTE MODAL (used for both Add + Edit) -->
+  <div id="noteModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal card">
+      <button class="modal-close" id="closeModalBtn" aria-label="Close">×</button>
+      <h2 id="noteFormTitle">Add a New Note</h2>
+
+      <form id="noteForm">
+        <label>
+          Note title
+          <input type="text" id="noteTitle" required>
+        </label>
+
+        <div class="form-row">
+          <label>
+            Chapter
+            <input type="number" id="noteChapter" min="1">
+          </label>
+          <label>
+            Page(s)
+            <input type="text" id="notePages" placeholder="10–15">
+          </label>
+        </div>
+
+        <label>
+          Date logged
+          <input type="date" id="noteDate">
+        </label>
+
+        <label>
+          Your thoughts
+          <textarea id="noteThoughts" rows="4" required></textarea>
+        </label>
+
+        <label>
+          Favourite quotes (optional, one per line)
+          <textarea id="noteQuotes" rows="3" placeholder="Quote 1&#10;Quote 2"></textarea>
+        </label>
+
+        <label>
+          Rating
+          <div id="ratingStars" class="rating-stars">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" id="noteSubmitBtn" class="btn-primary">Save Note</button>
+          <button type="button" id="noteCancelBtn" class="btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/book.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Book - Book Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Add a New Book</h1>
+    <a href="index.html" class="btn-secondary">← Back to My Books</a>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <form id="bookForm" class="card">
+        <label>
+          Title
+          <input type="text" id="title" required>
+        </label>
+
+        <label>
+          Author
+          <input type="text" id="author">
+        </label>
+
+        <label>
+          Cover image URL
+          <input type="url" id="coverImage" placeholder="https://...">
+        </label>
+
+        <label>
+          Genre tags (comma separated)
+          <input type="text" id="genreTags" placeholder="sci-fi, memoir">
+        </label>
+
+        <label>
+          Description (optional)
+          <textarea id="description" rows="3" placeholder="Short description of the book"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save Book</button>
+          <a href="index.html" class="btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/add-book.js"></script>
+</body>
+</html>

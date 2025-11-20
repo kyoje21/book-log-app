@@ -1,7 +1,8 @@
 // frontend/js/index.js
 // Book list page — uses MongoDB backend via REST API (no login)
 
-const API_BASE_URL = 'http://localhost:4000'; // Change this to your deployed backend URL later
+const API_BASE_URL = "https://book-log-app.onrender.com";
+
 
 async function fetchBooks() {
   try {

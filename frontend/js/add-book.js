@@ -1,7 +1,7 @@
 // frontend/js/add-book.js
 // Add book page — sends data to MongoDB backend
 
-const API_BASE_URL = 'http://localhost:4000'; // Change to deployed backend later
+const API_BASE_URL = "https://book-log-app.onrender.com";
 
 document.addEventListener('DOMContentLoaded', () => {
   const bookForm = document.getElementById('bookForm');

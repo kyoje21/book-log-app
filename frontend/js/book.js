@@ -1,7 +1,8 @@
 // frontend/js/book.js
 // Book detail + chapter notes with modal (add + edit) using MongoDB backend (no login)
 
-const API_BASE_URL = 'http://localhost:4000'; // Change to deployed backend later
+const API_BASE_URL = "https://book-log-app.onrender.com";
+
 
 // Global-ish state
 let currentBook = null;

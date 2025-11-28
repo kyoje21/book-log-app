@@ -5,30 +5,47 @@
   <title>Book Details - Book Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://use.typekit.net/zyf6kch.css">
+  
 </head>
 <body>
   <header class="site-header">
     <h1 id="bookTitle">Book Details</h1>
-    <a href="index.html" class="btn-secondary">← Back to My Books</a>
+    <a href="index.html" class="header-btn">← Back to My Books</a>
   </header>
 
   <main class="book-detail-layout">
     <!-- Book info -->
     <section class="book-detail-panel card">
-      <img id="bookCover" src="" alt="Book cover" class="book-detail-cover">
+
+      <!-- LEFT COLUMN: Cover + Edit Button -->
+      <div class="book-detail-left">
+        <img id="bookCover" src="" alt="Book cover" class="book-detail-cover">
+    
+        <button id="editBookBtn" class="btn-primary edit-book-btn">
+          Edit Book Info
+        </button>
+      </div>
+    
+      <!-- RIGHT COLUMN: Book Info -->
       <div class="book-detail-meta">
+        <h2 id="infoBookTitle" class="book-info-title"></h2>
+    
         <p><strong>Author:</strong> <span id="bookAuthor"></span></p>
         <p><strong>Genres:</strong> <span id="bookGenres"></span></p>
+    
         <p><strong>Description:</strong></p>
         <p id="bookDescription"></p>
       </div>
+    
     </section>
+    
 
     <!-- Notes -->
     <section class="notes-panel card">
       <div class="notes-header">
         <h2>Chapter Notes</h2>
-        <button id="addNoteBtn" class="btn-primary">+ Add Note</button>
+        <button id="addNoteBtn" class="btn-primary add-note-btn">+ Add Note</button>
       </div>
 
       <div id="notesList" class="notes-list"></div>
@@ -73,8 +90,8 @@
           <textarea id="noteQuotes" rows="3" placeholder="Quote 1&#10;Quote 2"></textarea>
         </label>
 
-        <label>
-          Rating
+      
+        <p class="form-label">Rating</p>
           <div id="ratingStars" class="rating-stars">
             <span class="star" data-value="1">★</span>
             <span class="star" data-value="2">★</span>
@@ -82,7 +99,7 @@
             <span class="star" data-value="4">★</span>
             <span class="star" data-value="5">★</span>
           </div>
-        </label>
+      
 
         <div class="form-actions">
           <button type="submit" id="noteSubmitBtn" class="btn-primary">Save Note</button>
@@ -91,6 +108,48 @@
       </form>
     </div>
   </div>
+  
+  <!-- BOOK EDIT MODAL -->
+<div id="editBookModal" class="modal-overlay hidden">
+  <div class="modal card">
+    <button class="modal-close" id="closeBookEditBtn">×</button>
+    <h2>Edit Book Info</h2>
+
+    <form id="editBookForm">
+
+      <label>
+        Title
+        <input type="text" id="editBookTitle" required>
+      </label>
+
+      <label>
+        Author
+        <input type="text" id="editBookAuthor">
+      </label>
+
+      <label>
+        Genres (comma separated)
+        <input type="text" id="editBookGenres">
+      </label>
+
+      <label>
+        Cover Image URL
+        <input type="text" id="editBookCover">
+      </label>
+
+      <label>
+        Description
+        <textarea id="editBookDescription" rows="4"></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <button type="button" id="cancelBookEditBtn" class="btn-secondary">Cancel</button>
+      </div>
+
+    </form>
+  </div>
+</div>
 
   <script src="js/book.js"></script>
 </body>

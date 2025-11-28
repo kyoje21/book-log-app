@@ -5,17 +5,31 @@
   <title>My Books - Book Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://use.typekit.net/zyf6kch.css">
 </head>
+
 <body>
   <header class="site-header">
-    <h1>📚 My Book Journal</h1>
+    <h1>My Book Journal</h1>
+    <a href="add-book.html" class="header-btn">+ Add New Book</a>
   </header>
 
-  <main>
+  <main class="bookroom-layout">
+
+    <!-- LEFT: Books + shelves -->
     <section id="book-list" class="book-list"></section>
-    <div class="actions-bar">
-      <a href="add-book.html" class="btn-primary">+ Add New Book</a>
+
+    <!-- RIGHT: Chair SVG -->
+    <div class="chair-side">
+      <img src="assets/chairplantlamp.svg" alt="Chairlamp" class="chair-svg">
     </div>
+    <div class="info-panel">
+      <h2>Welcome to Your Book Journal</h2>
+      <p>
+        This is a place to add books to your personal shelf, track your reading progress, and capture your thoughts chapter by chapter. Your space to save meaningful quotes, rate your favorite moments, and build a reading archive that <br> grows with you.
+      </p>
+      
+
   </main>
 
   <script src="js/index.js"></script>

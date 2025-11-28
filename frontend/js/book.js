@@ -1,160 +1,180 @@
 // frontend/js/book.js
-// Book detail + chapter notes with modal (add + edit) using MongoDB backend (no login)
+// Book detail page logic with edit modal + note modal + rating system
 
 const API_BASE_URL = "https://book-log-app.onrender.com";
 
-
-// Global-ish state
+/* ==========================================================
+   GLOBAL STATE
+========================================================== */
 let currentBook = null;
 let currentBookId = null;
 let editingNoteId = null;
 let currentRating = 0;
 
-// DOM refs
+/* ==========================================================
+   DOM ELEMENT REFERENCES
+========================================================== */
 let bookTitleEl,
+  infoBookTitleEl,
   bookAuthorEl,
   bookGenresEl,
   bookDescriptionEl,
   bookCoverEl,
-  notesListEl,
-  noteModalEl,
+  notesListEl;
+
+let noteModalEl,
   addNoteBtn,
   closeModalBtn,
   noteCancelBtn,
   noteForm,
   noteFormTitle,
-  noteSubmitBtn,
-  noteTitleInput,
+  noteSubmitBtn;
+
+let noteTitleInput,
   noteChapterInput,
   notePagesInput,
   noteDateInput,
   noteThoughtsInput,
-  noteQuotesInput,
-  ratingStarsEl;
+  noteQuotesInput;
 
-// Rating utilities
+let ratingStarsEl;
+
+// Book edit modal references
+let editBookModal,
+  editBookBtn,
+  closeBookEditBtn,
+  cancelBookEditBtn,
+  editBookForm,
+  editBookTitle,
+  editBookAuthor,
+  editBookGenres,
+  editBookCover,
+  editBookDescription;
+
+/* ==========================================================
+   RATING STARS UTILITIES
+========================================================== */
 function setRating(value) {
-  currentRating = value || 0;
+  currentRating = value;
   if (!ratingStarsEl) return;
-  const stars = ratingStarsEl.querySelectorAll('.star');
-  stars.forEach((s) => {
-    const v = Number(s.dataset.value);
-    s.classList.toggle('active', v <= currentRating);
+
+  const stars = ratingStarsEl.querySelectorAll(".star");
+  stars.forEach((star) => {
+    const v = Number(star.dataset.value);
+    star.classList.toggle("active", v <= currentRating);
   });
 }
 
 function initRatingStars() {
   if (!ratingStarsEl) return;
-  const stars = ratingStarsEl.querySelectorAll('.star');
+
+  const stars = ratingStarsEl.querySelectorAll(".star");
 
   stars.forEach((star) => {
     const val = Number(star.dataset.value);
 
-    star.addEventListener('click', () => setRating(val));
+    // Click → set rating
+    star.addEventListener("click", () => setRating(val));
 
-    star.addEventListener('mouseenter', () => {
+    // Hover effect
+    star.addEventListener("mouseenter", () => {
       stars.forEach((s) => {
-        const sVal = Number(s.dataset.value);
-        if (sVal <= val) {
-          s.classList.add('hovered');
-        } else {
-          s.classList.remove('hovered');
-        }
+        const v = Number(s.dataset.value);
+        s.classList.toggle("hovered", v <= val);
       });
     });
   });
 
-  ratingStarsEl.addEventListener('mouseleave', () => {
-    const stars = ratingStarsEl.querySelectorAll('.star');
-    stars.forEach((s) => s.classList.remove('hovered'));
+  // Remove hover when leaving the star area
+  ratingStarsEl.addEventListener("mouseleave", () => {
+    const stars = ratingStarsEl.querySelectorAll(".star");
+    stars.forEach((s) => s.classList.remove("hovered"));
   });
 }
 
-// Modal
+/* ==========================================================
+   NOTE MODAL HANDLING
+========================================================== */
 function openNoteModal(isEdit = false, note = null) {
-  document.body.classList.add('modal-open');
-  noteModalEl.classList.remove('hidden');
-  noteModalEl.setAttribute('aria-hidden', 'false');
+  noteModalEl.classList.remove("hidden");
+  document.body.classList.add("modal-open");
+
+  // ⭐ IMPORTANT: re-bind the rating stars each time
+  ratingStarsEl = document.getElementById("ratingStars");
+  initRatingStars();
 
   if (isEdit && note) {
     editingNoteId = note._id;
-    noteFormTitle.textContent = 'Edit Note';
-    noteSubmitBtn.textContent = 'Update Note';
+    noteFormTitle.textContent = "Edit Note";
+    noteSubmitBtn.textContent = "Update Note";
 
-    noteTitleInput.value = note.title || '';
-    noteChapterInput.value =
-      note.chapter != null && note.chapter !== '' ? note.chapter : '';
-    notePagesInput.value = note.pages || '';
-    noteDateInput.value = note.dateLogged
-      ? note.dateLogged.slice(0, 10)
-      : '';
-    noteThoughtsInput.value = note.thoughts || '';
-    noteQuotesInput.value = (note.favouriteQuotes || []).join('\n');
+    noteTitleInput.value = note.title || "";
+    noteChapterInput.value = note.chapter || "";
+    notePagesInput.value = note.pages || "";
+    noteDateInput.value = note.dateLogged ? note.dateLogged.slice(0, 10) : "";
+    noteThoughtsInput.value = note.thoughts || "";
+    noteQuotesInput.value = (note.favouriteQuotes || []).join("\n");
+
     setRating(note.rating || 0);
   } else {
     editingNoteId = null;
-    noteFormTitle.textContent = 'Add a New Note';
-    noteSubmitBtn.textContent = 'Save Note';
     noteForm.reset();
     setRating(0);
+    noteFormTitle.textContent = "Add a New Note";
+    noteSubmitBtn.textContent = "Save Note";
   }
 }
 
 function closeNoteModal() {
-  document.body.classList.remove('modal-open');
-  noteModalEl.classList.add('hidden');
-  noteModalEl.setAttribute('aria-hidden', 'true');
+  noteModalEl.classList.add("hidden");
+  document.body.classList.remove("modal-open");
 }
 
-// Notes rendering
-
+/* ==========================================================
+   NOTES RENDERING
+========================================================== */
 function formatDate(dateStr) {
-  if (!dateStr) return '';
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString();
-  } catch {
-    return dateStr;
-  }
+  if (!dateStr) return "";
+  return new Date(dateStr).toLocaleDateString();
 }
 
 function renderNotes(notes) {
-  if (!notesListEl) return;
-
   if (!notes.length) {
-    notesListEl.innerHTML = '<p>No notes yet. Add your first chapter note.</p>';
+    notesListEl.innerHTML = "<p>No notes yet.</p>";
     return;
   }
 
   notesListEl.innerHTML = notes
     .map((note) => {
-      const ratingStars = note.rating
-        ? '★'.repeat(note.rating) + '☆'.repeat(5 - note.rating)
-        : '';
-      const chapterText =
-        note.chapter != null && note.chapter !== '' ? `Chapter ${note.chapter}` : '';
-      const pagesText = note.pages ? ` • Pages ${note.pages}` : '';
-      const dateText = note.dateLogged ? ` • ${formatDate(note.dateLogged)}` : '';
+      const stars =
+        note.rating > 0
+          ? "★".repeat(note.rating) + "☆".repeat(5 - note.rating)
+          : "";
 
       return `
       <article class="note-card">
         <div class="note-card-header">
           <div>
-            <div class="note-card-title">${note.title || 'Untitled note'}</div>
+            <div class="note-card-title">${note.title}</div>
             <div class="note-card-meta">
-              ${[chapterText, pagesText, dateText].filter(Boolean).join('')}
+              ${note.chapter ? `Chapter ${note.chapter}` : ""}
+              ${note.pages ? ` • Pages ${note.pages}` : ""}
+              ${note.dateLogged ? ` • ${formatDate(note.dateLogged)}` : ""}
             </div>
           </div>
-          <div class="note-card-rating">${ratingStars}</div>
+          <div class="note-card-rating">${stars}</div>
         </div>
-        <p>${note.thoughts || ''}</p>
+
+        <p>${note.thoughts}</p>
+
         ${
-          note.favouriteQuotes && note.favouriteQuotes.length
+          note.favouriteQuotes?.length
             ? `<p><strong>Favourite quotes:</strong><br>${note.favouriteQuotes
                 .map((q) => `“${q}”`)
-                .join('<br>')}</p>`
-            : ''
+                .join("<br>")}</p>`
+            : ""
         }
+
         <div class="note-card-actions">
           <button class="btn-secondary" data-note-id="${note._id}" data-action="edit">Edit</button>
           <button class="btn-secondary" data-note-id="${note._id}" data-action="delete">Delete</button>
@@ -162,202 +182,228 @@ function renderNotes(notes) {
       </article>
     `;
     })
-    .join('');
+    .join("");
 }
 
-// API helpers
-
+/* ==========================================================
+   API CALLS
+========================================================== */
 async function loadBookAndNotes() {
   const params = new URLSearchParams(window.location.search);
-  currentBookId = params.get('id');
+  currentBookId = params.get("id");
+
   if (!currentBookId) {
-    alert('No book id given.');
-    window.location.href = 'index.html';
+    window.location.href = "index.html";
     return;
   }
 
   try {
-    // Book
-    const bookRes = await fetch(`${API_BASE_URL}/api/books/${currentBookId}`);
-    if (!bookRes.ok) throw new Error('Failed to load book');
-    currentBook = await bookRes.json();
+    const res = await fetch(`${API_BASE_URL}/api/books/${currentBookId}`);
+    currentBook = await res.json();
 
-    bookTitleEl.textContent = currentBook.title || 'Book Details';
-    bookAuthorEl.textContent = currentBook.author || 'Unknown author';
-    bookGenresEl.textContent =
-      (currentBook.genreTags || []).join(', ') || 'No genre tags set';
-    bookDescriptionEl.textContent =
-      currentBook.description || 'No description yet.';
+    // Populate book info
+    bookTitleEl.textContent = currentBook.title;
+    infoBookTitleEl.textContent = currentBook.title;
+    bookAuthorEl.textContent = currentBook.author || "Unknown";
+    bookGenresEl.textContent = currentBook.genreTags?.join(", ") || "None";
+    bookDescriptionEl.textContent = currentBook.description || "No description.";
     bookCoverEl.src =
-      currentBook.coverImage ||
-      'https://via.placeholder.com/140x210?text=No+Cover';
-    bookCoverEl.alt = currentBook.title || 'Book cover';
+      currentBook.coverImage || "https://via.placeholder.com/140x210";
 
-    // Notes
-    await refreshNotes();
-  } catch (err) {
-    alert(err.message);
-    window.location.href = 'index.html';
+    refreshNotes();
+  } catch {
+    window.location.href = "index.html";
   }
 }
 
 async function refreshNotes() {
   const res = await fetch(`${API_BASE_URL}/api/books/${currentBookId}/notes`);
-  if (!res.ok) {
-    notesListEl.innerHTML = '<p>Could not load notes.</p>';
-    return;
-  }
   const notes = await res.json();
   renderNotes(notes);
 }
 
-// Event handlers
-
+/* ==========================================================
+   NOTE FORM SUBMIT
+========================================================== */
 async function handleNoteFormSubmit(e) {
   e.preventDefault();
-  const title = noteTitleInput.value.trim();
-  const chapterRaw = noteChapterInput.value;
-  const pages = notePagesInput.value.trim();
-  const dateLogged = noteDateInput.value
-    ? new Date(noteDateInput.value).toISOString()
-    : '';
-  const thoughts = noteThoughtsInput.value.trim();
-  const quotesRaw = noteQuotesInput.value;
-
-  if (!thoughts) {
-    alert('Please add your thoughts.');
-    return;
-  }
-
-  const chapter =
-    chapterRaw !== '' && !isNaN(Number(chapterRaw))
-      ? Number(chapterRaw)
-      : null;
-
-  const favouriteQuotes = quotesRaw
-    ? quotesRaw
-        .split('\n')
-        .map((q) => q.trim())
-        .filter(Boolean)
-    : [];
 
   const payload = {
-    title,
-    chapter,
-    pages,
-    dateLogged,
-    thoughts,
-    favouriteQuotes,
+    title: noteTitleInput.value.trim(),
+    chapter: noteChapterInput.value || null,
+    pages: notePagesInput.value.trim(),
+    dateLogged: noteDateInput.value
+      ? new Date(noteDateInput.value).toISOString()
+      : "",
+    thoughts: noteThoughtsInput.value.trim(),
+    favouriteQuotes: noteQuotesInput.value
+      .split("\n")
+      .map((q) => q.trim())
+      .filter(Boolean),
     rating: currentRating,
   };
 
   try {
     if (editingNoteId) {
-      // Update
-      const res = await fetch(`${API_BASE_URL}/api/notes/${editingNoteId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch(`${API_BASE_URL}/api/notes/${editingNoteId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Failed to update note');
-      }
     } else {
-      // Create new
-      const res = await fetch(
-        `${API_BASE_URL}/api/books/${currentBookId}/notes`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      );
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Failed to create note');
-      }
+      await fetch(`${API_BASE_URL}/api/books/${currentBookId}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
     }
 
     closeNoteModal();
-    await refreshNotes();
-  } catch (err) {
-    alert(err.message);
+    refreshNotes();
+  } catch {
+    alert("Error saving note");
   }
 }
 
+/* ==========================================================
+   NOTE LIST CLICK HANDLER
+========================================================== */
 async function handleNotesListClick(e) {
-  const btn = e.target.closest('button[data-note-id]');
+  const btn = e.target.closest("button[data-note-id]");
   if (!btn) return;
 
-  const noteId = btn.getAttribute('data-note-id');
-  const action = btn.getAttribute('data-action');
+  const noteId = btn.dataset.noteId;
+  const action = btn.dataset.action;
 
-  if (action === 'edit') {
-    // Fetch note details from current DOM list (or could re-fetch from API)
+  if (action === "edit") {
     const res = await fetch(`${API_BASE_URL}/api/books/${currentBookId}/notes`);
-    if (!res.ok) return;
     const notes = await res.json();
     const note = notes.find((n) => n._id === noteId);
-    if (note) openNoteModal(true, note);
-  } else if (action === 'delete') {
-    if (!confirm('Delete this note?')) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/notes/${noteId}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Failed to delete note');
-      }
-      await refreshNotes();
-    } catch (err) {
-      alert(err.message);
-    }
+    openNoteModal(true, note);
+  }
+
+  if (action === "delete") {
+    if (!confirm("Delete this note?")) return;
+
+    await fetch(`${API_BASE_URL}/api/notes/${noteId}`, {
+      method: "DELETE",
+    });
+
+    refreshNotes();
   }
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-  // Grab DOM elements
-  bookTitleEl = document.getElementById('bookTitle');
-  bookAuthorEl = document.getElementById('bookAuthor');
-  bookGenresEl = document.getElementById('bookGenres');
-  bookDescriptionEl = document.getElementById('bookDescription');
-  bookCoverEl = document.getElementById('bookCover');
-  notesListEl = document.getElementById('notesList');
+/* ==========================================================
+   BOOK EDIT MODAL + SUBMIT
+========================================================== */
+function openBookEditModal() {
+  editBookModal.classList.remove("hidden");
+  document.body.classList.add("modal-open");
 
-  noteModalEl = document.getElementById('noteModal');
-  addNoteBtn = document.getElementById('addNoteBtn');
-  closeModalBtn = document.getElementById('closeModalBtn');
-  noteCancelBtn = document.getElementById('noteCancelBtn');
-  noteForm = document.getElementById('noteForm');
-  noteFormTitle = document.getElementById('noteFormTitle');
-  noteSubmitBtn = document.getElementById('noteSubmitBtn');
+  editBookTitle.value = currentBook.title;
+  editBookAuthor.value = currentBook.author;
+  editBookGenres.value = currentBook.genreTags?.join(", ") || "";
+  editBookCover.value = currentBook.coverImage;
+  editBookDescription.value = currentBook.description;
+}
 
-  noteTitleInput = document.getElementById('noteTitle');
-  noteChapterInput = document.getElementById('noteChapter');
-  notePagesInput = document.getElementById('notePages');
-  noteDateInput = document.getElementById('noteDate');
-  noteThoughtsInput = document.getElementById('noteThoughts');
-  noteQuotesInput = document.getElementById('noteQuotes');
+function closeBookEditModal() {
+  editBookModal.classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
 
-  ratingStarsEl = document.getElementById('ratingStars');
+async function handleBookEditSubmit(e) {
+  e.preventDefault();
 
-  if (!bookTitleEl) return; // safety
+  const payload = {
+    title: editBookTitle.value.trim(),
+    author: editBookAuthor.value.trim(),
+    genreTags: editBookGenres.value
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean),
+    coverImage: editBookCover.value.trim(),
+    description: editBookDescription.value.trim(),
+  };
 
-  // Wire events
-  if (addNoteBtn) addNoteBtn.addEventListener('click', () => openNoteModal(false));
-  if (closeModalBtn) closeModalBtn.addEventListener('click', closeNoteModal);
-  if (noteCancelBtn) noteCancelBtn.addEventListener('click', closeNoteModal);
-  if (noteModalEl) {
-    noteModalEl.addEventListener('click', (e) => {
-      if (e.target === noteModalEl) closeNoteModal();
-    });
-  }
-  if (noteForm) noteForm.addEventListener('submit', handleNoteFormSubmit);
-  if (notesListEl) notesListEl.addEventListener('click', handleNotesListClick);
+  await fetch(`${API_BASE_URL}/api/books/${currentBookId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-  initRatingStars();
+  closeBookEditModal();
+  loadBookAndNotes();
+}
+
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM refs
+  bookTitleEl = document.getElementById("bookTitle");
+  infoBookTitleEl = document.getElementById("infoBookTitle");
+  bookAuthorEl = document.getElementById("bookAuthor");
+  bookGenresEl = document.getElementById("bookGenres");
+  bookDescriptionEl = document.getElementById("bookDescription");
+  bookCoverEl = document.getElementById("bookCover");
+  notesListEl = document.getElementById("notesList");
+
+  // Note modal refs
+  noteModalEl = document.getElementById("noteModal");
+  addNoteBtn = document.getElementById("addNoteBtn");
+  closeModalBtn = document.getElementById("closeModalBtn");
+  noteCancelBtn = document.getElementById("noteCancelBtn");
+  noteForm = document.getElementById("noteForm");
+  noteFormTitle = document.getElementById("noteFormTitle");
+  noteSubmitBtn = document.getElementById("noteSubmitBtn");
+
+  noteTitleInput = document.getElementById("noteTitle");
+  noteChapterInput = document.getElementById("noteChapter");
+  notePagesInput = document.getElementById("notePages");
+  noteDateInput = document.getElementById("noteDate");
+  noteThoughtsInput = document.getElementById("noteThoughts");
+  noteQuotesInput = document.getElementById("noteQuotes");
+
+  // Rating stars
+  ratingStarsEl = document.getElementById("ratingStars");
+
+  // Book edit modal refs
+  editBookModal = document.getElementById("editBookModal");
+  editBookBtn = document.getElementById("editBookBtn");
+  closeBookEditBtn = document.getElementById("closeBookEditBtn");
+  cancelBookEditBtn = document.getElementById("cancelBookEditBtn");
+
+  editBookForm = document.getElementById("editBookForm");
+  editBookTitle = document.getElementById("editBookTitle");
+  editBookAuthor = document.getElementById("editBookAuthor");
+  editBookGenres = document.getElementById("editBookGenres");
+  editBookCover = document.getElementById("editBookCover");
+  editBookDescription = document.getElementById("editBookDescription");
+
+  /* --- Event Listeners --- */
+
+  // Notes modal
+  addNoteBtn?.addEventListener("click", () => openNoteModal(false));
+  closeModalBtn?.addEventListener("click", closeNoteModal);
+  noteCancelBtn?.addEventListener("click", closeNoteModal);
+  noteModalEl?.addEventListener("click", (e) => {
+    if (e.target === noteModalEl) closeNoteModal();
+  });
+  noteForm?.addEventListener("submit", handleNoteFormSubmit);
+
+  notesListEl?.addEventListener("click", handleNotesListClick);
+
+  // Book edit modal
+  editBookBtn?.addEventListener("click", openBookEditModal);
+  closeBookEditBtn?.addEventListener("click", closeBookEditModal);
+  cancelBookEditBtn?.addEventListener("click", closeBookEditModal);
+  editBookModal?.addEventListener("click", (e) => {
+    if (e.target === editBookModal) closeBookEditModal();
+  });
+
+  editBookForm?.addEventListener("submit", handleBookEditSubmit);
+
+  // Load main content
   loadBookAndNotes();
 });

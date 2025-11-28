@@ -1,3 +1,6 @@
+/* ==========================================================
+   GLOBAL RESET + BASE
+========================================================== */
 *,
 *::before,
 *::after {
@@ -6,49 +9,102 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f5f7;
+  font-family: "begum", serif; /* Body font */
+  font-weight: 300;
+  background: #ead5c5;
   color: #222;
-}
-
-.site-header {
-  padding: 1rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.site-header h1 {
-  margin: 0;
-  font-size: 1.4rem;
 }
 
 main {
   padding: 1.5rem;
-  max-width: 1024px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
-/* Buttons */
 
-.btn-primary,
-.btn-secondary {
+/* ==========================================================
+   HEADER
+========================================================== */
+.site-header {
+  background: #233b2b;
+  border-bottom: 3px solid #000;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-family: "roca", serif; /* Header font */
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: #e14b26;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000;
+}
+
+/* Unified header button */
+.header-btn {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: #e14b26;
+  color: #121212;
+
+  font-family: "roca", serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  padding: 0.55rem 1.2rem;
+  border-radius: 8px;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  transition: transform 0.1s ease;
+}
+
+.header-btn:hover {
+  transform: translateY(-50%) scale(1.03);
+}
+/* ==========================================================
+   UTILITY: HIDDEN
+========================================================== */
+.hidden {
+  display: none !important;
+}
+
+
+/* ==========================================================
+   UNIVERSAL BUTTONS
+========================================================== */
+.btn-primary,
+.btn-secondary {
   padding: 0.5rem 1rem;
-  border-radius: 999px;
+  border-radius: 8px; /* sharper */
   border: none;
   font-size: 0.95rem;
+
+  font-family: "roca", serif;
+  font-weight: 500;
+
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, color 0.1s ease;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-primary {
@@ -56,10 +112,9 @@ main {
   color: #fff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22);
 }
 
 .btn-secondary {
@@ -67,72 +122,191 @@ main {
   color: #222;
   border: 1px solid #ccc;
 }
-
 .btn-secondary:hover {
   background: #f2f2f2;
 }
 
-/* Cards / layout */
 
-.card {
-  background: #ffffff;
-  border-radius: 1rem;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-}
-
-.book-list {
+/* ==========================================================
+   MAIN LAYOUT (books + chair)
+========================================================== */
+.bookroom-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.book-card {
-  display: flex;
-  gap: 0.75rem;
-  background: #ffffff;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-}
-
-.book-card-cover {
-  width: 96px;
-  height: 144px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.book-card-body {
-  padding: 0.75rem 0.75rem 0.75rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.book-card-body h2 {
-  margin: 0;
-  font-size: 1.05rem;
-}
-
-.book-card-author {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.book-card-genres {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #777;
-}
-
-.actions-bar {
+  grid-template-columns: 3fr 1.4fr;
+  gap: 2rem;
+  align-items: start;
   margin-top: 1.5rem;
 }
 
-/* Book detail layout */
+@media (max-width: 900px) {
+  .bookroom-layout {
+    grid-template-columns: 1fr;
+  }
+  .chair-side {
+    display: none;
+  }
+}
 
+.chair-side {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+}
+
+.chair-svg {
+  width: min(30vw, 300px);
+  opacity: 0.9;
+}
+
+
+/* ==========================================================
+   BOOK SHELVES (rows + shelves)
+========================================================== */
+.book-shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  
+}
+
+.shelf-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  padding: 0 0.5rem;
+  margin-top: 20px;
+  position: relative;
+  margin-left: 15px;
+}
+
+@media (max-width: 900px) {
+  .shelf-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .shelf-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.shelf-row.empty {
+  min-height: 140px;
+}
+
+.shelf-svg-row {
+  width: 100%;
+  height: 22px;
+  background: url('../assets/shelf.svg') center/cover no-repeat;
+  margin-top: -6px;
+}
+
+
+/* ==========================================================
+   BOOK ITEMS
+========================================================== */
+.book-item {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.book-item:hover {
+  transform: scale(1.03);
+}
+
+.book-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+/* Hover info */
+.book-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  opacity: 0;
+
+  padding: 0.6rem;       /* smaller padding → more space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+  overflow: hidden;      /* IMPORTANT: prevents clipping */
+  text-align: center;
+  transition: opacity 0.25s ease;
+}
+
+
+.book-item:hover .book-hover {
+  opacity: 1;
+}
+
+.book-hover h3 {
+  font-family: "roca", serif;
+  margin: 0 0 0.6rem 0;
+  line-height: 1.15; /* Much tighter – reduces height */
+  font-size: 1.1rem;
+}
+
+
+
+.book-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  max-width: 95%; 
+  gap: 0.5rem;
+
+  flex-wrap: nowrap;      /* forces side-by-side */
+  overflow: visible;      /* shows entire buttons */
+}
+
+
+.book-actions button {
+  padding: 0.25rem 0.55rem;
+  min-width: 60px;
+  font-size: 0.8rem;
+
+  border: 2px solid #000;
+  border-radius: 6px;
+}
+
+
+.view-btn {
+  background: #fff;
+  color: #222;
+}
+.view-btn:hover {
+  background: #e5ecf6;      /* light blue/gray shade */
+  color: #222;              /* keep text readable */
+  border-color: #000;       /* keeps cartoon outline consistent */
+}
+
+
+.delete-btn {
+  background: #c53030;
+  color: #fff;
+  border-color: #000;
+}
+
+.delete-btn:hover {
+  background: #a81f1f;
+}
+
+
+
+/* ==========================================================
+   BOOK DETAIL PAGE
+========================================================== */
 .book-detail-layout {
   display: grid;
   gap: 1.5rem;
@@ -140,7 +314,7 @@ main {
 
 @media (min-width: 768px) {
   .book-detail-layout {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-columns: 2fr 3fr;
   }
 }
 
@@ -152,71 +326,187 @@ main {
 .book-detail-cover {
   width: 140px;
   height: 210px;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  flex-shrink: 0;
 }
 
 .book-detail-meta p {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
+  margin: 0.25rem 0;
 }
 
-/* Notes */
+.book-info-title {
+  font-family: "roca", serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #2a2929;
+}
 
+.book-detail-panel {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.book-detail-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.edit-book-btn {
+  width: 100%;
+  text-align: center;
+  padding: 0.45rem 1rem;
+}
+/* ============================================
+   ADD BOOK PAGE DECOR LAYOUT
+============================================ */
+.addbook-layout {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+  min-height: 80vh;
+}
+
+/* FORM WRAPPER */
+.form-wrapper {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  max-width: 520px;
+  width: 100%;
+  z-index: 5;
+}
+
+/* DECOR ITEMS */
+.decor {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+/* LEFT CHAIR */
+.chair-decor {
+  left: 2%;
+  bottom: 8%;
+  width: 230px;
+}
+
+/* RIGHT LAMP */
+.lamp-decor {
+  right: 2%;
+  top: 8%;
+  width: 260px;
+}
+
+/* Responsive: hide decor on mobile */
+@media (max-width: 900px) {
+  .decor {
+    display: none;
+  }
+}
+
+
+/* ==========================================================
+   NOTES
+========================================================== */
 .notes-panel {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.notes-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.notes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.note-card {
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.note-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.note-card-title {
+.notes-header h2 {
+  font-family: "roca", serif;
   font-weight: 600;
 }
 
-.note-card-meta {
-  font-size: 0.8rem;
-  color: #666;
+/* unified notes list */
+.notes-list {
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
 }
 
+/* each note becomes a flat block */
+.note-card {
+  padding: 1rem 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* divider between notes */
+.note-card:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+/* note header */
+.note-card-title {
+  font-family: "roca", serif;
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* metadata under title */
+.note-card-meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+/* action buttons row */
 .note-card-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.35rem;
+  margin-top: 1rem;
 }
 
-.note-card-rating {
+/* ==========================================================
+   NOTES HEADER ALIGNMENT
+========================================================== */
+.notes-header {
+  display: flex;
+  justify-content: space-between;   /* pushes h2 left, button right */
+  align-items: center;              /* vertically aligned */
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.notes-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-family: "roca", serif;
+}
+
+.add-note-btn {
+  padding: 0.45rem 1rem;
   font-size: 0.9rem;
-  color: #f5a623;
+  border-radius: 8px;
 }
 
-/* Forms */
+/* Make notes panel align with book info column */
+.notes-panel {
+  width: 100%;
+  margin-left: 0;                     /* remove any accidental offset */
+}
 
+/* Ensure entire notes section aligns under the book title */
+.book-detail-layout {
+  align-items: flex-start;             /* line up both columns to top */
+}
+
+
+/* ==========================================================
+   FORMS
+========================================================== */
 .form-container {
   max-width: 480px;
   margin: 0 auto;
@@ -224,98 +514,93 @@ main {
 
 form label {
   display: block;
-  font-size: 0.9rem;
   margin-bottom: 0.75rem;
+  font-family: "begum", serif;
+  font-weight: 300;
+  font-size: 0.9rem;
 }
 
 form input,
 form textarea {
   width: 100%;
   margin-top: 0.25rem;
-  padding: 0.4rem 0.55rem;
+  padding: 0.5rem;
+  font-family: "begum", serif;
+  font-weight: 300;
   border-radius: 0.5rem;
   border: 1px solid #ccc;
-  font: inherit;
 }
 
-.form-row {
-  display: flex;
-  gap: 0.75rem;
+.form-actions button {
+  font-family: "roca", serif;
 }
 
-.form-row label {
-  flex: 1;
-}
 
-.form-actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-/* Modal + background blur */
-
+/* ==========================================================
+   MODAL
+========================================================== */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.45);
   display: grid;
   place-items: center;
   z-index: 50;
-  backdrop-filter: blur(4px);
 }
 
 .modal {
-  max-width: 520px;
   width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
   max-height: calc(100vh - 4rem);
-  overflow: auto;
+  overflow-y: auto;
   position: relative;
 }
 
 .modal-close {
   position: absolute;
-  top: 0.4rem;
-  right: 0.6rem;
-  border: none;
-  background: transparent;
+  right: 1rem;
+  top: 0.75rem;
   font-size: 1.5rem;
+  background: none;
+  border: none;
   cursor: pointer;
 }
 
-.hidden {
-  display: none;
-}
 
-/* Blur the main content when modal is open */
-body.modal-open main,
-body.modal-open .site-header {
-  filter: blur(4px);
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Rating stars */
-
+/* ==========================================================
+   RATING STARS — FINAL CLEAN VERSION
+========================================================== */
 .rating-stars {
-  display: inline-flex;
-  gap: 0.15rem;
-  font-size: 1.3rem;
-  cursor: pointer;
-  user-select: none;
+  display: flex;
+  gap: 0.35rem;
 }
 
 .rating-stars .star {
-  opacity: 0.4;
-  transition: opacity 0.1s ease, transform 0.1s ease;
+  font-size: 1.6rem;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  opacity: 0.35;
+
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+
+.rating-stars .star:hover {
+  opacity: 0.7;
+  transform: scale(1.1);
 }
 
 .rating-stars .star.active {
   opacity: 1;
+  color: #e6b800; /* gold highlight */
 }
 
 .rating-stars .star.hovered {
-  opacity: 0.75;
-  transform: translateY(-1px);
+  opacity: 0.7;
 }
+
+

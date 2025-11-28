@@ -22,39 +22,54 @@ async function fetchBooks() {
 }
 
 function renderBooks(books) {
-  const list = document.getElementById('book-list');
-  if (!list) return;
+  const container = document.getElementById("book-list");
+  container.innerHTML = "";
 
-  if (!books.length) {
-    list.innerHTML = '<p>You have no books yet. Click “Add New Book” to start.</p>';
-    return;
-  }
+  const booksPerRow = 5; // how many books fit per shelf
 
-  list.innerHTML = books
-    .map(
-      (book) => `
-      <article class="book-card">
-        <img
-          src="${book.coverImage || 'https://via.placeholder.com/120x180?text=No+Cover'}"
-          alt="${book.title}"
-          class="book-card-cover"
-        />
-        <div class="book-card-body">
-          <h2>${book.title}</h2>
-          <p class="book-card-author">${book.author || 'Unknown author'}</p>
-          <p class="book-card-genres">
-            ${(book.genreTags || []).join(', ') || 'No genre tags yet'}
-          </p>
-          <div style="margin-top:0.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button class="btn-secondary" onclick="openBook('${book._id}')">Open notes</button>
-            <button class="btn-secondary" onclick="deleteBook('${book._id}')">Delete</button>
+  for (let i = 0; i < books.length; i += booksPerRow) {
+    const rowBooks = books.slice(i, i + booksPerRow);
+
+    // 1. Book row
+    const shelfRow = document.createElement("div");
+    shelfRow.classList.add("shelf-row");
+
+    rowBooks.forEach(book => {
+      shelfRow.innerHTML += `
+        <div class="book-item">
+          <img src="${book.coverImage}" class="book-cover">
+          <div class="book-hover">
+            <h3>${book.title}</h3>
+            <div class="book-actions">
+              <button class="view-btn" onclick="openBook('${book._id}')">Open</button>
+              <button class="delete-btn" onclick="deleteBook('${book._id}')">Delete</button>
+            </div>
           </div>
         </div>
-      </article>
-    `
-    )
-    .join('');
+      `;
+    });
+
+    container.appendChild(shelfRow);
+
+    // 2. Shelf graphic row
+    const shelfGraphic = document.createElement("div");
+    shelfGraphic.classList.add("shelf-svg-row");
+    container.appendChild(shelfGraphic);
+  }
+
+  // OPTIONAL — extra empty shelves
+  for (let k = 0; k < 2; k++) {
+    const emptyRow = document.createElement("div");
+    emptyRow.classList.add("shelf-row", "empty");
+    container.appendChild(emptyRow);
+
+    const shelfGraphic = document.createElement("div");
+    shelfGraphic.classList.add("shelf-svg-row");
+    container.appendChild(shelfGraphic);
+  }
 }
+
+
 
 function openBook(id) {
   window.location.href = 'book.html?id=' + encodeURIComponent(id);

@@ -5,16 +5,26 @@
   <title>Add Book - Book Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://use.typekit.net/zyf6kch.css">
 </head>
 <body>
+
   <header class="site-header">
     <h1>Add a New Book</h1>
-    <a href="index.html" class="btn-secondary">← Back to My Books</a>
+    <a href="index.html" class="header-btn">← Back to My Books</a>
   </header>
 
-  <main>
-    <div class="form-container">
+
+  <!-- MAIN WRAPPER WITH DECOR -->
+  <main class="addbook-layout">
+
+    <!-- LEFT: CHAIR -->
+    <img src="assets/chair.svg" alt="Chair" class="decor chair-decor">
+
+    <!-- FORM SECTION -->
+    <section class="form-wrapper">
       <form id="bookForm" class="card">
+
         <label>
           Title
           <input type="text" id="title" required>
@@ -44,9 +54,15 @@
           <button type="submit" class="btn-primary">Save Book</button>
           <a href="index.html" class="btn-secondary">Cancel</a>
         </div>
+
       </form>
-    </div>
+    </section>
+
+    <!-- RIGHT: LAMP -->
+    <img src="assets/lamp.svg" alt="Lamp" class="decor lamp-decor">
+
   </main>
+
 
   <script src="js/add-book.js"></script>
 </body>

@@ -23,6 +23,26 @@
 
     <!-- FORM SECTION -->
     <section class="form-wrapper">
+
+      <!-- ⭐ GOOGLE BOOK SEARCH BAR ⭐ -->
+      <div class="google-search-box" style="margin-bottom: 1.5rem;">
+        <input 
+          id="googleSearchInput" 
+          type="text" 
+          placeholder="Search book title…"
+          style="padding: 10px; width: 70%; max-width: 320px; border-radius: 6px; border: 1px solid #ccc;"
+        >
+        <button 
+          id="googleSearchBtn" 
+          type="button"
+          style="padding: 10px 16px; margin-left: 6px; border-radius: 6px; border: none; background:#333; color:#fff; cursor:pointer;"
+        >
+          Search Google Books
+        </button>
+
+        <p id="googleSearchStatus" style="margin-top: 6px; font-size: 14px; color: #666;"></p>
+      </div>
+
       <form id="bookForm" class="card">
 
         <label>
@@ -62,7 +82,6 @@
     <img src="assets/lamp.svg" alt="Lamp" class="decor lamp-decor">
 
   </main>
-
 
   <script src="js/add-book.js"></script>
 </body>

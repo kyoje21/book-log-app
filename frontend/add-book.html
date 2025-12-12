@@ -14,35 +14,31 @@
     <a href="index.html" class="header-btn">← Back to My Books</a>
   </header>
 
-
-  <!-- MAIN WRAPPER WITH DECOR -->
   <main class="addbook-layout">
 
-    <!-- LEFT: CHAIR -->
+    <!-- LEFT DECOR -->
     <img src="assets/chair.svg" alt="Chair" class="decor chair-decor">
 
-    <!-- FORM SECTION -->
     <section class="form-wrapper">
 
-      <!-- ⭐ GOOGLE BOOK SEARCH BAR ⭐ -->
-      <div class="google-search-box" style="margin-bottom: 1.5rem;">
-        <input 
-          id="googleSearchInput" 
-          type="text" 
-          placeholder="Search book title…"
-          style="padding: 10px; width: 70%; max-width: 320px; border-radius: 6px; border: 1px solid #ccc;"
-        >
-        <button 
-          id="googleSearchBtn" 
-          type="button"
-          style="padding: 10px 16px; margin-left: 6px; border-radius: 6px; border: none; background:#333; color:#fff; cursor:pointer;"
-        >
-          Search Google Books
-        </button>
+      <!-- 🔍 GOOGLE SEARCH SECTION -->
+      <div class="google-search-wrapper">
+        <input
+          id="googleSearchInput"
+          class="google-search-input"
+          type="text"
+          placeholder="Search Google Books by title..."
+        />
 
-        <p id="googleSearchStatus" style="margin-top: 6px; font-size: 14px; color: #666;"></p>
+        <button id="googleSearchBtn" class="google-search-btn">
+          Search
+        </button>
       </div>
 
+      <!-- Search results dropdown -->
+      <div id="googleResults" class="google-results-dropdown hidden"></div>
+
+      <!-- FORM -->
       <form id="bookForm" class="card">
 
         <label>
@@ -78,7 +74,7 @@
       </form>
     </section>
 
-    <!-- RIGHT: LAMP -->
+    <!-- RIGHT DECOR -->
     <img src="assets/lamp.svg" alt="Lamp" class="decor lamp-decor">
 
   </main>

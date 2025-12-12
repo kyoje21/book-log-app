@@ -1,41 +1,46 @@
 const express = require('express');
+const fetch = require('node-fetch');
 const router = express.Router();
-const fetch = (...args) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 router.get('/', async (req, res) => {
-  const { title } = req.query;
+  const title = req.query.title;
+
   if (!title) {
-    return res.status(400).json({ message: 'Missing title parameter' });
+    return res.status(400).json({ message: "Missing title parameter" });
   }
 
   try {
     const apiKey = process.env.GOOGLE_BOOKS_KEY;
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-      title
-    )}&maxResults=1&key=${apiKey}`;
+    const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(title)}&key=${apiKey}`;
 
     const response = await fetch(url);
     const data = await response.json();
 
+    // If Google Books returns nothing
     if (!data.items || data.items.length === 0) {
-      return res.status(404).json({ message: 'No results found' });
+      return res.json({ message: "No results found", raw: data });
     }
 
-    const volume = data.items[0].volumeInfo;
-
-    res.json({
-      title: volume.title || "",
-      authors: volume.authors || [],
-      description: volume.description || "",
-      coverImage:
-        volume.imageLinks?.thumbnail ||
-        volume.imageLinks?.smallThumbnail ||
-        "",
-      raw: volume,
+    // Extract clean results (not just first)
+    const books = data.items.map(item => {
+      const info = item.volumeInfo;
+      return {
+        title: info.title || "Unknown Title",
+        authors: info.authors || [],
+        description: info.description || "",
+        coverImage:
+          info.imageLinks?.thumbnail ||
+          info.imageLinks?.smallThumbnail ||
+          "",
+        raw: info
+      };
     });
+
+    res.json({ results: books });
+
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch data', error: err.message });
+    console.error("Google Books API Error:", err);
+    res.status(500).json({ message: "Failed to fetch data", error: err.message });
   }
 });
 

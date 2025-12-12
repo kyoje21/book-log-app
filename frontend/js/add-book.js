@@ -1,55 +1,77 @@
 // frontend/js/add-book.js
-// Add Book page — includes Google Books lookup
 
 const API_BASE_URL = "https://book-log-app.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
   const bookForm = document.getElementById("bookForm");
+
+  // SEARCH ELEMENTS
   const searchBtn = document.getElementById("googleSearchBtn");
   const searchInput = document.getElementById("googleSearchInput");
+  const resultsBox = document.getElementById("googleResults");
 
   // -----------------------------
-  // 1. GOOGLE BOOKS SEARCH
+  // GOOGLE BOOKS SEARCH
   // -----------------------------
   searchBtn?.addEventListener("click", async () => {
-    const title = searchInput.value.trim();
-    if (!title) {
+    const query = searchInput.value.trim();
+    if (!query) {
       alert("Enter a title to search.");
       return;
     }
 
+    resultsBox.innerHTML = `<div class="google-result-item">Searching...</div>`;
+    resultsBox.classList.remove("hidden");
+
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/googlebooks?title=${encodeURIComponent(title)}`
+        `${API_BASE_URL}/api/googlebooks?title=${encodeURIComponent(query)}`
       );
-
       const data = await res.json();
 
       if (!data.results || data.results.length === 0) {
-        alert("No books found");
+        resultsBox.innerHTML = `<div class="google-result-item">No results found</div>`;
         return;
       }
 
-      const book = data.results[0]; // take first result
+      // LIMIT RESULTS TO 5
+      const limited = data.results.slice(0, 5);
 
-      document.getElementById("title").value = book.title || "";
-      document.getElementById("author").value = (book.authors || []).join(", ");
-      document.getElementById("coverImage").value = book.coverImage || "";
-      document.getElementById("description").value = book.description || "";
+      resultsBox.innerHTML = limited
+        .map(
+          (b, i) => `
+        <div class="google-result-item" data-index="${i}">
+          <strong>${b.title}</strong><br>
+          <span>${(b.authors || []).join(", ")}</span>
+        </div>
+      `
+        )
+        .join("");
 
-      console.log("Google Books result:", book);
+      // CLICK TO AUTOFILL
+      document.querySelectorAll(".google-result-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const idx = item.dataset.index;
+          const chosen = limited[idx];
+
+          document.getElementById("title").value = chosen.title || "";
+          document.getElementById("author").value = (chosen.authors || []).join(", ");
+          document.getElementById("coverImage").value = chosen.coverImage || "";
+          document.getElementById("description").value = chosen.description || "";
+
+          resultsBox.classList.add("hidden"); // hide dropdown
+        });
+      });
 
     } catch (err) {
-      console.error("Google Books error:", err);
-      alert("Failed to search book info");
+      resultsBox.innerHTML = `<div class="google-result-item">Error fetching results</div>`;
+      console.error(err);
     }
   });
 
   // -----------------------------
-  // 2. SUBMIT BOOK TO DATABASE
+  // SUBMIT BOOK
   // -----------------------------
-  if (!bookForm) return;
-
   bookForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -71,9 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/books`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
           author,
@@ -90,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Book added!");
       window.location.href = "index.html";
+
     } catch (err) {
       console.error(err);
       alert("Error saving book");

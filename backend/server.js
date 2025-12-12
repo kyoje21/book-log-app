@@ -9,6 +9,8 @@ dotenv.config();
 
 const bookRoutes = require('./routes/book.routes');
 const notesRoutes = require('./routes/notes.routes');
+const googleBooksRoutes = require('./routes/googlebooks.routes');
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -22,6 +24,8 @@ app.use(express.json());
 // API routes (no auth)
 app.use('/api/books', bookRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/googlebooks', googleBooksRoutes);
+
 
 // (Optional) health check
 app.get('/api/health', (req, res) => {
